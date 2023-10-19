@@ -1,0 +1,57 @@
+package com.example.weathertraincleanarchit.presentation.composables
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import com.example.weathertraincleanarchit.domain.model.Daily
+import com.example.weathertraincleanarchit.presentation.state.DailyWeatherState
+import java.time.DayOfWeek
+
+@Composable
+fun DailyWeatherComp(state: DailyWeatherState) {
+    WeatherLzyRow(weatherData = state.data)
+}
+
+@Composable
+fun WeatherLzyRow(weatherData: Map<DayOfWeek, List<Daily>>?) {
+    LazyRow {
+        weatherData?.entries?.let { 
+            items(it.toList()) { (dayOfWeek, dailyWeatherList) ->
+                WeatherItem(dayOfWeek =dayOfWeek , dailyWeatherList = dailyWeatherList)
+            }
+        }
+    }
+}
+
+@Composable
+fun WeatherItem(dayOfWeek: DayOfWeek, dailyWeatherList: List<Daily>) {
+    Column(
+        modifier = Modifier.padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = dayOfWeek.toString()) // Display the day of week
+        Spacer(modifier = Modifier.height(6.dp))
+        dailyWeatherList.forEach { dailyWeatherItem ->
+            Image(
+                painter = painterResource(id = dailyWeatherItem.weatherType.iconRes),
+                contentDescription = null,
+                modifier = Modifier.size(50.dp))
+            Text(text = "${dailyWeatherItem.temperature_2m_max}°",
+                modifier = Modifier.padding(8.dp))
+            Spacer(modifier = Modifier.height(3.dp))
+            Text(text = "${dailyWeatherItem.temeprature_2m_min}°",
+                modifier = Modifier.padding(8.dp))
+        }
+    }
+}
